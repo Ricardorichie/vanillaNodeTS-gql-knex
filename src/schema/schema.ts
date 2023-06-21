@@ -3,6 +3,7 @@ import {
   GraphQLString,
   GraphQLSchema,
   GraphQLInt,
+  GraphQLList,
 } from "graphql";
 
 const books = [
@@ -28,6 +29,7 @@ const BookType = new GraphQLObjectType({
     genre: {
       type: GraphQLString,
     },
+    // 1:1 relationship
     author: {
       type: AuthorType,
       resolve(parent, args) {
@@ -38,7 +40,7 @@ const BookType = new GraphQLObjectType({
   }),
 });
 
-const AuthorType = new GraphQLObjectType({
+const AuthorType: GraphQLObjectType = new GraphQLObjectType({
   name: "Author",
   fields: () => ({
     id: {
@@ -49,6 +51,13 @@ const AuthorType = new GraphQLObjectType({
     },
     rating: {
       type: GraphQLInt,
+    },
+    //1:M relationship with query list
+    books: {
+      type: new GraphQLList(BookType),
+      resolve(parent, args) {
+        return books.filter((b) => b.authorId === parent.id);
+      },
     },
   }),
 });
