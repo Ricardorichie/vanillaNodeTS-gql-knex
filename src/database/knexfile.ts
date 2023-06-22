@@ -5,7 +5,7 @@ interface IKnexConfig {
 }
 // Update with your config settings.
 
-const config: IKnexConfig = {
+const configs: IKnexConfig = {
   development: {
     client: "sqlite3",
     connection: {
@@ -48,4 +48,4 @@ const config: IKnexConfig = {
   },
 };
 
-export default config;
+export default configs;

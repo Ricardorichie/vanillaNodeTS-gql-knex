@@ -5,6 +5,7 @@ import {
   GraphQLInt,
   GraphQLList,
 } from "graphql";
+import db from "../database/db";
 
 const BookType = new GraphQLObjectType({
   name: "Book",
@@ -23,7 +24,12 @@ const BookType = new GraphQLObjectType({
       type: AuthorType,
       resolve(parent, args) {
         // parent.authorId;
-        return authors.filter((a) => a.id === parent.authorId)[0];
+        return db()
+          .select("*")
+          .from("authors")
+          .where("id", parent.authorId)
+          .first();
+        // .filter((a) => a.id === parent.authorId)[0];
       },
     },
   }),
@@ -45,7 +51,9 @@ const AuthorType: GraphQLObjectType = new GraphQLObjectType({
     books: {
       type: new GraphQLList(BookType),
       resolve(parent, args) {
-        return books.filter((b) => b.authorId === parent.id);
+        return db().select("*").from("books").where("authorId", parent.id);
+        // .first();
+        // return books.filter((b) => b.authorId === parent.id);
       },
     },
   }),
@@ -59,7 +67,7 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLString } },
       resolve(parent, args) {
         ///where we do fetch from data
-        return books.filter((b) => b.id === args.id)[0];
+        return db().select().from("books").where("id", args.id).first();
       },
     },
     author: {
@@ -67,7 +75,8 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLString } },
       resolve(parent, args) {
         ///where we do fetch from data
-        return authors.filter((a) => a.id === args.id)[0];
+        return db().select().from("authors").where("id", args.id).first();
+        // return authors.filter((a) => a.id === args.id)[0];
       },
     },
   }),
