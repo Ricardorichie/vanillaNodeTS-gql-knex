@@ -6,17 +6,6 @@ import {
   GraphQLList,
 } from "graphql";
 
-const books = [
-  { title: "My book", id: "1", genre: "thriller", authorId: "1" },
-  { title: "History of the World", id: "2", genre: "history", authorId: "1" },
-  { title: "The book of stories", id: "3", genre: "fiction", authorId: "2" },
-];
-const authors = [
-  { name: "Jack Jones", age: 55, rating: 5, id: "1" },
-  { name: "Verna Frag", age: 60, rating: 5, id: "2" },
-  { name: "Ron Tamara", age: 25, rating: 5, id: "3" },
-  { name: "Ranji Imaan", age: 35, rating: 5, id: "4" },
-];
 const BookType = new GraphQLObjectType({
   name: "Book",
   fields: () => ({
