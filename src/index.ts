@@ -41,6 +41,11 @@ app.use(
     graphiql: true,
   })
 );
+
 app.listen(4000, () => {
   console.log("Now listening on port 4000");
 });
+//for dev environment
+// app.listen(process.env.PORT, () => {
+//   console.log("Now listening on port ", process.env.PORT);
+// });
