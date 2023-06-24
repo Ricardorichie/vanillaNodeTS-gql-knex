@@ -6,7 +6,9 @@ import {
   GraphQLList,
 } from "graphql";
 import db from "../database/db";
-
+import { v4 as uuid } from "uuid";
+import * as bcrypt from "bcryptjs";
+import generateToken from "../helpers/generateToken";
 const BookType = new GraphQLObjectType({
   name: "Book",
   fields: () => ({
@@ -31,6 +33,38 @@ const BookType = new GraphQLObjectType({
           .first();
         // .filter((a) => a.id === parent.authorId)[0];
       },
+    },
+  }),
+});
+
+const UserType = new GraphQLObjectType({
+  name: "Users",
+  fields: () => ({
+    id: {
+      type: GraphQLString,
+    },
+    username: {
+      type: GraphQLString,
+    },
+    password: {
+      type: GraphQLString,
+    },
+    email: {
+      type: GraphQLString,
+    },
+  }),
+});
+const AuthPayloadType = new GraphQLObjectType({
+  name: "AuthpayLoad",
+  fields: () => ({
+    token: {
+      type: GraphQLString,
+    },
+    message: {
+      type: GraphQLString,
+    },
+    user: {
+      type: UserType,
     },
   }),
 });
@@ -81,6 +115,47 @@ const RootQuery = new GraphQLObjectType({
     },
   }),
 });
+
+const Mutation = new GraphQLObjectType({
+  name: "Mutation",
+  fields: () => ({
+    registerUser: {
+      type: AuthPayloadType,
+      args: {
+        username: {
+          type: GraphQLString,
+        },
+        email: {
+          type: GraphQLString,
+        },
+        password: {
+          type: GraphQLString,
+        },
+      },
+      async resolve(parent, args) {
+        const { username, email, password } = args;
+        const id = uuid();
+        await db("users").insert({
+          id,
+          username,
+          email,
+          password: await bcrypt.hash(password, 10),
+        });
+        const token = generateToken(id, email);
+        return {
+          token,
+          user: {
+            id,
+            username,
+            email,
+          },
+          message: "User registered correctly",
+        };
+      },
+    },
+  }),
+});
 export default new GraphQLSchema({
   query: RootQuery,
+  mutation: Mutation,
 });
