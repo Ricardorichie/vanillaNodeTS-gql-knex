@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:dev": "source development.env && nodemon",
+    "start:dev": "nodemon",
     "knex": "./node_modules/.bin/knex --knexfile src/database/knexfile.ts",
     "migrate": "knex migrate:latest"
   },
